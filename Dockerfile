@@ -35,3 +35,6 @@ RUN chmod -v +x /etc/service/*/run && chmod -v +x /etc/my_init.d/*.sh && \
 # give abc user a home folder
 usermod -d /config/serviio abc
 
+# ports and volumes
+EXPOSE 23424/tcp 8895/tcp 1900/udp 8780/tcp
+VOLUME /config /tmp /media
