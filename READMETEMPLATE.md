@@ -36,7 +36,7 @@ Part of what makes our containers work so well is by allowing you to specify you
 
 ## Setting up the application
 
-The webui is on port 8780. Add as many media folder mappings as required with `-v /media/tv-shows` etc... Also you can setting a mapping for transcoding `-v /tmp`  ensures that the container doesn't grow unneccesarily large.
+The webui is on port 8780. Add as many media folder mappings as required with `-v /media/tv-shows` etc... Also setting a mapping for transcoding `-v /tmp`  ensures that the container doesn't grow unneccesarily large.
 
 
 ## Updates
