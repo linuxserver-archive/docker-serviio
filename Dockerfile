@@ -19,17 +19,14 @@ RUN locale-gen en_US.UTF-8
 
 # install serviio app and curl source code
 RUN mkdir -p /app/serviio && \
-mkdir -p /tmp/ffmpeg && \
 mkdir -p /tmp/rtmpdump && \
 mkdir -p /tmp/yasm && \
 mkdir -p /tmp/cmake/build  && \
 curl  -o /tmp/serviio.tar.gz -L http://download.serviio.org/releases/serviio-$SERVIIO_VER-linux.tar.gz && \
-curl -o /tmp/ffmpeg2.4.tar.bz2 -L http://download.serviio.org/opensource/ffmpeg-2.4.x.tar.bz2 && \
 curl -o /tmp/rtmpdump.tar.gz -L  http://download.serviio.org/opensource/rtmpdump.tar.gz && \
 curl -o /tmp/yasm1.tar.gz  -L http://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz && \
 curl -o /tmp/cmake3.tar.gz -L http://www.cmake.org/files/v3.1/cmake-3.1.2.tar.gz && \
 tar xvf /tmp/serviio.tar.gz -C /app/serviio --strip-components=1 && \
-tar xvf /tmp/ffmpeg2.4.tar.bz2 -C /tmp/ffmpeg --strip-components=1 && \
 tar xvf /tmp/rtmpdump.tar.gz -C /tmp/rtmpdump --strip-components=1 && \
 tar xvf /tmp/yasm1.tar.gz -C /tmp/yasm --strip-components=1 && \
 tar xvf /tmp/cmake3.tar.gz -C /tmp/cmake --strip-components=1 && \
@@ -40,6 +37,7 @@ apt-get update && \
 apt-get install $BUILD_APTLIST -qy && \
 
 # clone source codes
+git clone https://github.com/FFmpeg/FFmpeg /tmp/ffmpeg && \
 git clone git://git.videolan.org/x264 /tmp/x264 && \
 hg clone http://hg.videolan.org/x265 /tmp/x265 && \
 git clone https://chromium.googlesource.com/webm/libvpx /tmp/libvpx && \
@@ -87,7 +85,6 @@ ln -s /usr/local/lib/libx265.so.75 && \
 
 # compile ffmpeg
 cd /tmp/ffmpeg && \
-export LDFLAGS='-L/usr/local/lib/' && \
 ./configure --enable-gpl --enable-libfaac --enable-libmp3lame --enable-libopencore-amrnb \
     --enable-libopencore-amrwb --enable-libtheora --enable-libvorbis --enable-libx264 \
     --enable-nonfree --enable-postproc --enable-version3 --enable-x11grab --enable-librtmp \
