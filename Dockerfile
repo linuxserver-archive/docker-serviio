@@ -2,53 +2,80 @@ FROM linuxserver/baseimage.apache
 
 MAINTAINER Sparklyballs <sparklyballs@linuxserver.io>
 
-ENV BUILD_APTLIST="build-essential checkinstall cmake cmake-curses-gui mercurial texi2html yasm zlib1g-dev"
+ENV BUILD_APTLIST=\
+"build-essential checkinstall git libfaac-dev libjack-jackd2-dev \
+libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libsdl1.2-dev libtheora-dev \
+libva-dev libvdpau-dev libvorbis-dev libx11-dev libxfixes-dev texi2html zlib1g-dev \
+libssl1.0.0 libssl-dev libxvidcore-dev libxvidcore4 libass-dev cmake mercurial"
 
-ENV APTLIST="dcraw git libass-dev libfaac-dev libjack-jackd2-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libsdl1.2-dev libssl1.0.0 libssl-dev libtheora-dev libva-dev libvorbis-dev libx11-dev libxfixes-dev libxvidcore4 libxvidcore-dev libvdpau-dev oracle-java8-installer php5-xmlrpc unzip wget"
+
+ENV APTLIST="apache2 git-core  php5 php5-curl php5-xmlrpc oracle-java8-installer dcraw"
 
 # set serviio version, java and location ENV
 ENV SERVIIO_VER="1.5.2" JAVA_HOME="/usr/lib/jvm/java-8-oracle" LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 
 # Set the locale
-RUN locale-gen en_US.UTF-8 && \
+RUN locale-gen en_US.UTF-8
 
-# repositories
-add-apt-repository -y ppa:webupd8team/java && \
-echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
-
-# install serviio app
+# install serviio app and curl source code
 RUN mkdir -p /app/serviio && \
+mkdir -p /tmp/ffmpeg && \
+mkdir -p /tmp/rtmpdump && \
+mkdir -p /tmp/yasm && \
+mkdir -p /tmp/cmake/build  && \
 curl  -o /tmp/serviio.tar.gz -L http://download.serviio.org/releases/serviio-$SERVIIO_VER-linux.tar.gz && \
+curl -o /tmp/ffmpeg2.4.tar.bz2 -L http://download.serviio.org/opensource/ffmpeg-2.4.x.tar.bz2 && \
+curl -o /tmp/rtmpdump.tar.gz -L  http://download.serviio.org/opensource/rtmpdump.tar.gz && \
+curl -o /tmp/yasm1.tar.gz  -L http://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz && \
+curl -o /tmp/cmake3.tar.gz -L http://www.cmake.org/files/v3.1/cmake-3.1.2.tar.gz && \
 tar xvf /tmp/serviio.tar.gz -C /app/serviio --strip-components=1 && \
+tar xvf /tmp/ffmpeg2.4.tar.bz2 -C /tmp/ffmpeg --strip-components=1 && \
+tar xvf /tmp/rtmpdump.tar.gz -C /tmp/rtmpdump --strip-components=1 && \
+tar xvf /tmp/yasm1.tar.gz -C /tmp/yasm --strip-components=1 && \
+tar xvf /tmp/cmake3.tar.gz -C /tmp/cmake --strip-components=1 && \
 mv /app/serviio/plugins /app/serviio/plugins_orig && \
 
 # install build packages
 apt-get update && \
-apt-get install $APTLIST $BUILD_APTLIST -qy && \
+apt-get install $BUILD_APTLIST -qy && \
 
 # clone source codes
 git clone git://git.videolan.org/x264 /tmp/x264 && \
-git clone git://git.ffmpeg.org/rtmpdump /tmp/rtmpdump && \
 hg clone http://hg.videolan.org/x265 /tmp/x265 && \
-git clone --depth 1 git://git.videolan.org/ffmpeg /tmp/ffmpeg && \
-git clone https://github.com/webmproject/libvpx/ /tmp/libvpx && \
+git clone https://chromium.googlesource.com/webm/libvpx /tmp/libvpx && \
+
+# compile yasm
+cd /tmp/yasm && \
+./configure && \
+make && \
+checkinstall --pkgname=yasm --pkgversion="1.3.0" --backup=no --deldoc=yes --fstrans=no --default && \
+
+# compile cmake
+cd /tmp/cmake/build && \
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr && \
+make && \
+make install && \
+ldconfig && \
 
 # compile x264
 cd /tmp/x264 && \
 ./configure --enable-static --disable-opencl && \
 make && \
-checkinstall --pkgname=x264 --pkgversion="3:$(./version.sh | awk -F'[" ]' '/POINT/{print $4"+git"$5}')" --backup=no --deldoc=yes --fstrans=no --default && \
+checkinstall --pkgname=x264 --pkgversion="3:$(./version.sh | \
+awk -F'[" ]' '/POINT/{print $4"+git"$5}')" --backup=no --deldoc=yes \
+--fstrans=no --default && \
 
 # compile rtmpdump
 cd /tmp/rtmpdump && \
-make SYS=posix && \
-checkinstall --pkgname=rtmpdump --pkgversion="2:$(date +%Y%m%d%H%M)-git" --backup=no --deldoc=yes --fstrans=no --default && \
+make && \
+make install && \
 
 # compile libvpx
 cd /tmp/libvpx && \
 ./configure && \
 make && \
-checkinstall --pkgname=libvpx --pkgversion="1:$(date +%Y%m%d%H%M)-git" --backup=no --deldoc=yes --fstrans=no --default && \
+checkinstall --pkgname=libvpx --pkgversion="1:$(date +%Y%m%d%H%M)-git" --backup=no \
+    --deldoc=yes --fstrans=no --default && \
 
 # compile x265
 cd /tmp/x265/build && \
@@ -60,26 +87,13 @@ ln -s /usr/local/lib/libx265.so.75 && \
 
 # compile ffmpeg
 cd /tmp/ffmpeg && \
-./configure --enable-gpl \
---enable-libfaac \
---enable-libmp3lame \
---enable-libopencore-amrnb \
---enable-libopencore-amrwb \
---enable-libtheora \
---enable-libvorbis \
---enable-libx264 \
---enable-nonfree \
---enable-postproc \
---enable-version3 \
---enable-x11grab \
---enable-librtmp \
---enable-libxvid \
---enable-libass \
---enable-libx265 \
---enable-postproc \
---enable-libvpx && \
+export LDFLAGS='-L/usr/local/lib/' && \
+./configure --enable-gpl --enable-libfaac --enable-libmp3lame --enable-libopencore-amrnb \
+    --enable-libopencore-amrwb --enable-libtheora --enable-libvorbis --enable-libx264 \
+    --enable-nonfree --enable-postproc --enable-version3 --enable-x11grab --enable-librtmp \
+    --enable-libxvid --enable-libass --enable-libx265 --enable-libvpx && \
 make && \
-checkinstall --pkgname=ffmpeg --pkgversion="99:$(date +%Y%m%d%H%M)-git" --backup=no --deldoc=yes --fstrans=no --default && \
+make install && \
 
 # compile x264 lavf support
 apt-get remove x264 -y && \
@@ -88,16 +102,23 @@ rm *.deb && \
 make distclean && \
 ./configure \
 --enable-static \
---enable-lavf \
 --disable-opencl && \
 make && \
-checkinstall --pkgname=x264 --pkgversion="3:$(./version.sh | awk -F'[" ]' '/POINT/{print $4"+git"$5}')" --backup=no --deldoc=yes --fstrans=no --default && \
-echo "include /usr/local/lib/" >>  /etc/ld.so.conf && \
-ldconfig && \
+make install && \
 
-# remove build packages and check reinstall runtimes
+# remove build packages and install runtimes
 apt-get purge --remove $BUILD_APTLIST -y && \
 apt-get autoremove -y && \
+
+# cleanup
+cd /tmp && \
+apt-get clean && rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/*
+
+# instal runtime packages
+RUN add-apt-repository -y ppa:webupd8team/java && \
+echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
+
+RUN apt-get update -q && \
 apt-get install $APTLIST -qy && \
 
 # cleanup
