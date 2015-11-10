@@ -9,7 +9,7 @@ libva-dev libvdpau-dev libvorbis-dev libx11-dev libxfixes-dev texi2html zlib1g-d
 libssl1.0.0 libssl-dev libxvidcore-dev libxvidcore4 libass-dev cmake mercurial"
 
 
-ENV APTLIST="apache2 git-core  php5 php5-curl php5-xmlrpc oracle-java8-installer dcraw"
+ENV APTLIST="dcraw git-core oracle-java8-installer php5-xmlrpc"
 
 # set serviio version, java and location ENV
 ENV SERVIIO_VER="1.5.2" JAVA_HOME="/usr/lib/jvm/java-8-oracle" LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
@@ -104,14 +104,13 @@ make && \
 make install && \
 
 # remove build packages and install runtimes
-apt-get purge --remove $BUILD_APTLIST -y && \
-apt-get autoremove -y && \
+apt-get remove $BUILD_APTLIST -y && \
 
 # cleanup
 cd /tmp && \
 apt-get clean && rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/*
 
-# instal runtime packages
+# install runtime packages
 RUN add-apt-repository -y ppa:webupd8team/java && \
 echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
 
@@ -134,3 +133,4 @@ usermod -d /config/serviio abc
 # ports and volumes
 EXPOSE 23424/tcp 8895/tcp 1900/udp 8780/tcp
 VOLUME /config /transcode
+
