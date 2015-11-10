@@ -2,9 +2,9 @@ FROM linuxserver/baseimage.apache
 
 MAINTAINER Sparklyballs <sparklyballs@linuxserver.io>
 
-ENV BUILD_APTLIST="build-essential checkinstall cmake cmake-curses-gui mercurial texi2html yasm zlib1g-dev"
+ENV BUILD_APTLIST="build-essential checkinstall cmake cmake-curses-gui git libass-dev libfaac-dev libjack-jackd2-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libsdl1.2-dev libssl1.0.0 libssl-dev libtheora-dev libva-dev libvorbis-dev libx11-dev libxfixes-dev libxvidcore4 libxvidcore-dev libvdpau-dev mercurial texi2html yasm zlib1g-dev"
 
-ENV APTLIST="dcraw git libass-dev libfaac-dev libjack-jackd2-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libsdl1.2-dev libssl1.0.0 libssl-dev libtheora-dev libva-dev libvorbis-dev libx11-dev libxfixes-dev libxvidcore4 libxvidcore-dev libvdpau-dev oracle-java8-installer php5-xmlrpc unzip wget"
+ENV APTLIST="dcraw git-core oracle-java8-installer lame libmp3lame0 php5-xmlrpc unzip wget"
 
 # set serviio version, java and location ENV
 ENV SERVIIO_VER="1.5.2" JAVA_HOME="/usr/lib/jvm/java-8-oracle" LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
@@ -24,7 +24,7 @@ mv /app/serviio/plugins /app/serviio/plugins_orig && \
 
 # install build packages
 apt-get update && \
-apt-get install $APTLIST $BUILD_APTLIST -qy && \
+apt-get install $BUILD_APTLIST -qy && \
 
 # clone source codes
 git clone git://git.videolan.org/x264 /tmp/x264 && \
@@ -88,7 +88,6 @@ rm *.deb && \
 make distclean && \
 ./configure \
 --enable-static \
---enable-lavf \
 --disable-opencl && \
 make && \
 checkinstall --pkgname=x264 --pkgversion="3:$(./version.sh | awk -F'[" ]' '/POINT/{print $4"+git"$5}')" --backup=no --deldoc=yes --fstrans=no --default && \
@@ -98,7 +97,7 @@ ldconfig && \
 # remove build packages and check reinstall runtimes
 apt-get purge --remove $BUILD_APTLIST -y && \
 apt-get autoremove -y && \
-apt-get install $APTLIST -qy && \
+apt-get install $BASE_APTLIST $APTLIST -qy && \
 
 # cleanup
 cd /tmp && \
