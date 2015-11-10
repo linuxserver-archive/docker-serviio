@@ -114,4 +114,4 @@ usermod -d /config/serviio abc
 
 # ports and volumes
 EXPOSE 23424/tcp 8895/tcp 1900/udp 8780/tcp
-VOLUME /config /transcode
+VOLUME /config /tmp /media
