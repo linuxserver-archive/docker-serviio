@@ -10,7 +10,7 @@ libssl1.0.0 libssl-dev libxvidcore-dev libxvidcore4 libass-dev cmake mercurial"
 
 
 ENV APTLIST="dcraw git-core oracle-java8-installer php5-xmlrpc"
-
+ENV REPLACE_APT="apache2-mpm-worker libapache2-mod-fastcgi openssl php5 php5-cli php5-curl php5-fpm"
 # set serviio version, java and location ENV
 ENV SERVIIO_VER="1.5.2" JAVA_HOME="/usr/lib/jvm/java-8-oracle" LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 
@@ -111,11 +111,13 @@ cd /tmp && \
 apt-get clean && rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/*
 
 # install runtime packages
-RUN add-apt-repository -y ppa:webupd8team/java && \
+RUN apt-get update -q && \
+apt-get install software-properties-common python-software-properties -qy && \
+add-apt-repository -y ppa:webupd8team/java && \
 echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
 
 RUN apt-get update -q && \
-apt-get install $APTLIST -qy && \
+apt-get install $REPLACE_APT $APTLIST -qy && \
 
 # cleanup
 cd /tmp && \
@@ -126,6 +128,19 @@ ADD defaults/ /defaults/
 ADD init/ /etc/my_init.d/
 ADD services/ /etc/service/
 RUN chmod -v +x /etc/service/*/run && chmod -v +x /etc/my_init.d/*.sh && \
+
+# enable apache mods
+cp /etc/apache2/ports.conf /defaults/ports.conf && \
+mv /defaults/envvars /etc/apache2/envvars && \
+mv /defaults/php5-fpm.conf /etc/apache2/conf-available/ && \ 
+ln -s /etc/apache2/conf-available/php5-fpm.conf /etc/apache2/conf-enabled/ && \
+sed -i "s/www-data/abc/g" /etc/php5/fpm/pool.d/www.conf && \
+sed -i "s#/var/www#/config/www#g" /etc/apache2/apache2.conf && \
+sed -i "s#IncludeOptional sites-enabled#IncludeOptional /config/apache/site-confs#g" /etc/apache2/apache2.conf && \
+sed -i '/Include ports.conf/s/^/#/g' /etc/apache2/apache2.conf && \
+echo "Include /config/apache/ports.conf"  >> /etc/apache2/apache2.conf && \
+cp /etc/apache2/apache2.conf /defaults/apache2.conf && \
+a2enmod actions rewrite fastcgi alias ssl
 
 # give abc user a home folder
 usermod -d /config/serviio abc
