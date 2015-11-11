@@ -2,122 +2,28 @@ FROM linuxserver/baseimage.apache
 
 MAINTAINER Sparklyballs <sparklyballs@linuxserver.io>
 
-ENV BUILD_APTLIST=\
-"build-essential checkinstall git libfaac-dev libjack-jackd2-dev \
-libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libsdl1.2-dev libtheora-dev \
-libva-dev libvdpau-dev libvorbis-dev libx11-dev libxfixes-dev texi2html zlib1g-dev \
-libssl1.0.0 libssl-dev libxvidcore-dev libxvidcore4 libass-dev cmake mercurial"
+ENV APTLIST="dcraw git-core ffmpeg oracle-java8-installer php5-xmlrpc"
 
-
-ENV APTLIST="dcraw git-core oracle-java8-installer php5-xmlrpc"
-ENV REPLACE_APT="apache2-mpm-worker libapache2-mod-fastcgi openssl php5 php5-cli php5-curl php5-fpm"
 # set serviio version, java and location ENV
 ENV SERVIIO_VER="1.5.2" JAVA_HOME="/usr/lib/jvm/java-8-oracle" LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 
 # Set the locale
 RUN locale-gen en_US.UTF-8
 
-# install serviio app and curl source code
-RUN mkdir -p /app/serviio && \
-mkdir -p /tmp/rtmpdump && \
-mkdir -p /tmp/yasm && \
-mkdir -p /tmp/cmake/build  && \
-curl  -o /tmp/serviio.tar.gz -L http://download.serviio.org/releases/serviio-$SERVIIO_VER-linux.tar.gz && \
-curl -o /tmp/rtmpdump.tar.gz -L  http://download.serviio.org/opensource/rtmpdump.tar.gz && \
-curl -o /tmp/yasm1.tar.gz  -L http://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz && \
-curl -o /tmp/cmake3.tar.gz -L http://www.cmake.org/files/v3.1/cmake-3.1.2.tar.gz && \
-tar xvf /tmp/serviio.tar.gz -C /app/serviio --strip-components=1 && \
-tar xvf /tmp/rtmpdump.tar.gz -C /tmp/rtmpdump --strip-components=1 && \
-tar xvf /tmp/yasm1.tar.gz -C /tmp/yasm --strip-components=1 && \
-tar xvf /tmp/cmake3.tar.gz -C /tmp/cmake --strip-components=1 && \
-mv /app/serviio/plugins /app/serviio/plugins_orig && \
-
-# install build packages
-apt-get update && \
-apt-get install $BUILD_APTLIST -qy && \
-
-# clone source codes
-git clone https://github.com/FFmpeg/FFmpeg /tmp/ffmpeg && \
-git clone git://git.videolan.org/x264 /tmp/x264 && \
-hg clone http://hg.videolan.org/x265 /tmp/x265 && \
-git clone https://chromium.googlesource.com/webm/libvpx /tmp/libvpx && \
-
-# compile yasm
-cd /tmp/yasm && \
-./configure && \
-make && \
-checkinstall --pkgname=yasm --pkgversion="1.3.0" --backup=no --deldoc=yes --fstrans=no --default && \
-
-# compile cmake
-cd /tmp/cmake/build && \
-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr && \
-make && \
-make install && \
-ldconfig && \
-
-# compile x264
-cd /tmp/x264 && \
-./configure --enable-static --disable-opencl && \
-make && \
-checkinstall --pkgname=x264 --pkgversion="3:$(./version.sh | \
-awk -F'[" ]' '/POINT/{print $4"+git"$5}')" --backup=no --deldoc=yes \
---fstrans=no --default && \
-
-# compile rtmpdump
-cd /tmp/rtmpdump && \
-make && \
-make install && \
-
-# compile libvpx
-cd /tmp/libvpx && \
-./configure && \
-make && \
-checkinstall --pkgname=libvpx --pkgversion="1:$(date +%Y%m%d%H%M)-git" --backup=no \
-    --deldoc=yes --fstrans=no --default && \
-
-# compile x265
-cd /tmp/x265/build && \
-cmake ../source && \
-make && \
-make install && \
-cd /lib && \
-ln -s /usr/local/lib/libx265.so.75 && \
-
-# compile ffmpeg
-cd /tmp/ffmpeg && \
-./configure --enable-gpl --enable-libfaac --enable-libmp3lame --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb --enable-libtheora --enable-libvorbis --enable-libx264 \
-    --enable-nonfree --enable-postproc --enable-version3 --enable-x11grab --enable-librtmp \
-    --enable-libxvid --enable-libass --enable-libx265 --enable-libvpx && \
-make && \
-make install && \
-
-# compile x264 lavf support
-apt-get remove x264 -y && \
-cd /tmp/x264 && \
-rm *.deb && \
-make distclean && \
-./configure \
---enable-static \
---disable-opencl && \
-make && \
-make install && \
-
-# remove build packages and install runtimes
-apt-get remove $BUILD_APTLIST -y && \
-
-# cleanup
-cd /tmp && \
-apt-get clean && rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/*
-
-# install runtime packages
-RUN apt-get update -q && \
-apt-get install software-properties-common python-software-properties -qy && \
-add-apt-repository -y ppa:webupd8team/java && \
+# add repositories
+RUN add-apt-repository -y ppa:webupd8team/java && \
+add-apt-repository ppa:kirillshkrogalev/ffmpeg-next && \
 echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
 
-RUN apt-get update -q && \
-apt-get install $REPLACE_APT $APTLIST -qy && \
+# install serviio app
+RUN mkdir -p /app/serviio && \
+curl -o /tmp/serviio.tar.gz -L http://download.serviio.org/releases/serviio-$SERVIIO_VER-linux.tar.gz && \
+tar xf /tmp/serviio.tar.gz -C /app/serviio --strip-components=1 && \
+mv /app/serviio/plugins /app/serviio/plugins_orig && \
+
+# installpackages
+apt-get update && \
+apt-get install $APTLIST -qy && \
 
 # cleanup
 cd /tmp && \
@@ -128,19 +34,6 @@ ADD defaults/ /defaults/
 ADD init/ /etc/my_init.d/
 ADD services/ /etc/service/
 RUN chmod -v +x /etc/service/*/run && chmod -v +x /etc/my_init.d/*.sh && \
-
-# enable apache mods
-cp /etc/apache2/ports.conf /defaults/ports.conf && \
-mv /defaults/envvars /etc/apache2/envvars && \
-mv /defaults/php5-fpm.conf /etc/apache2/conf-available/ && \ 
-ln -s /etc/apache2/conf-available/php5-fpm.conf /etc/apache2/conf-enabled/ && \
-sed -i "s/www-data/abc/g" /etc/php5/fpm/pool.d/www.conf && \
-sed -i "s#/var/www#/config/www#g" /etc/apache2/apache2.conf && \
-sed -i "s#IncludeOptional sites-enabled#IncludeOptional /config/apache/site-confs#g" /etc/apache2/apache2.conf && \
-sed -i '/Include ports.conf/s/^/#/g' /etc/apache2/apache2.conf && \
-echo "Include /config/apache/ports.conf"  >> /etc/apache2/apache2.conf && \
-cp /etc/apache2/apache2.conf /defaults/apache2.conf && \
-a2enmod actions rewrite fastcgi alias ssl
 
 # give abc user a home folder
 usermod -d /config/serviio abc
