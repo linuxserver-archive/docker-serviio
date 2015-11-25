@@ -12,7 +12,7 @@ RUN locale-gen en_US.UTF-8
 
 # add repositories
 RUN add-apt-repository -y ppa:webupd8team/java && \
-add-apt-repository ppa:mc3man/trusty-media  && \
+add-apt-repository ppa:kirillshkrogalev/ffmpeg-next && \
 echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
 
 # install serviio app
