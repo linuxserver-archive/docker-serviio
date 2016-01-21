@@ -1,11 +1,11 @@
-FROM linuxserver/baseimage.apache
+FROM linuxserver/baseimage
 
 MAINTAINER Sparklyballs <sparklyballs@linuxserver.io>
 
-ENV APTLIST="dcraw git-core ffmpeg oracle-java8-installer php5-xmlrpc"
+ENV APTLIST="dcraw ffmpeg oracle-java8-installer"
 
 # set serviio version, java and location ENV
-ENV SERVIIO_VER="1.5.2" JAVA_HOME="/usr/lib/jvm/java-8-oracle" LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
+ENV SERVIIO_VER="1.6" JAVA_HOME="/usr/lib/jvm/java-8-oracle" LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 
 # Set the locale
 RUN locale-gen en_US.UTF-8
@@ -39,6 +39,6 @@ RUN chmod -v +x /etc/service/*/run && chmod -v +x /etc/my_init.d/*.sh && \
 usermod -d /config/serviio abc
 
 # ports and volumes
-EXPOSE 23424/tcp 8895/tcp 1900/udp 8780/tcp
+EXPOSE 23423/tcp 23424/tcp 8895/tcp 1900/udp
 VOLUME /config /transcode
 

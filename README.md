@@ -9,22 +9,18 @@ Serviio is a free media server. It allows you to stream your media files (music,
 ## Usage
 
 ```
-docker create --name=serviio -v /etc/localtime:/etc/localtime:ro -v <path to data>:/config -v <path to media>:/media -v <path for transcoding>:/tmp -e PGID=<gid> -e PUID=<uid>  -p 8780:8780 -p 8895:8895 -p 1900:1900/udp -p 23424:23424 linuxserver/serviio
+docker create --name=serviio -v /etc/localtime:/etc/localtime:ro -v <path to data>:/config -v <path to media>:/media -v <path for transcoding>:/tmp -e PGID=<gid> -e PUID=<uid> --net=host linuxserver/serviio
 ```
 
 **Parameters**
 
-* `-p 8780` - the port(s)
-* `-p 8895` - the port(s)
-* `-p 1900/udp` - the port(s)
-* `-p 23424` - the port(s)
+* `net=host` - Set network type
 * `-v /etc/localtime` for timesync - *optional*
 * `-v /config` - Where serviio stores its configuration files etc.
 * `-v /media` - Path to your media files, add more as necessary, see below.
 * `-v /tmp` - Temp folder - see below. -*optional, but recommended*
 * `-e PGID` for GroupID - see below for explanation
 * `-e PUID` for UserID - see below for explanation
-* `-e TZ` for timezone information eg Europe/London, etc
 
 It is based on phusion-baseimage with ssh removed, for shell access whilst the container is running do `docker exec -it serviio /bin/bash`.
 
@@ -36,7 +32,7 @@ Part of what makes our containers work so well is by allowing you to specify you
 
 ## Setting up the application
 
-The webui is on port 8780. Add as many media folder mappings as required with `-v /media/tv-shows` etc... Also setting a mapping for transcoding `-v /tmp`  ensures that the container doesn't grow unneccesarily large.
+The webui is at <your-ip>:23423/console. Add as many media folder mappings as required with `-v /media/tv-shows` etc... Also setting a mapping for transcoding `-v /tmp`  ensures that the container doesn't grow unneccesarily large.
 
 
 ## Logs
@@ -45,6 +41,6 @@ The webui is on port 8780. Add as many media folder mappings as required with `-
 
 
 ## Versions
-
++ **21-01-2016:** Ver 1.6 , webui built in.
 + **11.12.2015:** Initial Release.
 
