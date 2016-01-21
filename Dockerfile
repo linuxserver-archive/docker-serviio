@@ -2,7 +2,7 @@ FROM linuxserver/baseimage
 
 MAINTAINER Sparklyballs <sparklyballs@linuxserver.io>
 
-ENV APTLIST="dcraw git-core ffmpeg oracle-java8-installer php5-xmlrpc"
+ENV APTLIST="dcraw ffmpeg oracle-java8-installer"
 
 # set serviio version, java and location ENV
 ENV SERVIIO_VER="1.5.2" JAVA_HOME="/usr/lib/jvm/java-8-oracle" LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
