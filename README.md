@@ -9,22 +9,18 @@ Serviio is a free media server. It allows you to stream your media files (music,
 ## Usage
 
 ```
-docker create --name=serviio -v /etc/localtime:/etc/localtime:ro -v <path to data>:/config -v <path to media>:/media -v <path for transcoding>:/tmp -e PGID=<gid> -e PUID=<uid> -p 8895:8895 -p 1900:1900/udp -p 23423:23423 -p 23424:23424 linuxserver/serviio
+docker create --name=serviio -v /etc/localtime:/etc/localtime:ro -v <path to data>:/config -v <path to media>:/media -v <path for transcoding>:/tmp -e PGID=<gid> -e PUID=<uid> --net=host linuxserver/serviio
 ```
 
 **Parameters**
 
-* `-p 8895` - the port(s)
-* `-p 1900/udp` - the port(s)
-* `-p 23423` - the port(s)
-* `-p 23424` - the port(s)
+* `net=host` - Set network type
 * `-v /etc/localtime` for timesync - *optional*
 * `-v /config` - Where serviio stores its configuration files etc.
 * `-v /media` - Path to your media files, add more as necessary, see below.
 * `-v /tmp` - Temp folder - see below. -*optional, but recommended*
 * `-e PGID` for GroupID - see below for explanation
 * `-e PUID` for UserID - see below for explanation
-* `-e TZ` for timezone information eg Europe/London, etc
 
 It is based on phusion-baseimage with ssh removed, for shell access whilst the container is running do `docker exec -it serviio /bin/bash`.
 
