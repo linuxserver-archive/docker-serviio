@@ -5,7 +5,7 @@ MAINTAINER Sparklyballs <sparklyballs@linuxserver.io>
 ENV APTLIST="dcraw ffmpeg oracle-java8-installer"
 
 # set serviio version, java and location ENV
-ENV SERVIIO_VER="1.5.2" JAVA_HOME="/usr/lib/jvm/java-8-oracle" LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
+ENV SERVIIO_VER="1.6" JAVA_HOME="/usr/lib/jvm/java-8-oracle" LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 
 # Set the locale
 RUN locale-gen en_US.UTF-8
