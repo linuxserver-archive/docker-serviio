@@ -2,14 +2,17 @@
 
 The [LinuxServer.io](https://www.linuxserver.io/) team brings you another quality container release featuring easy user mapping and community support. Be sure to checkout our [forums](https://forum.linuxserver.io/index.php) or for real-time support our [IRC](https://www.linuxserver.io/index.php/irc/) on freenode at `#linuxserver.io`.
 
-# linuxserver/serviio
+# lsiodev/serviio
 
 Serviio is a free media server. It allows you to stream your media files (music, video or images) to renderer devices (e.g. a TV set, Bluray player, games console or mobile phone) on your connected home network. [Serviio](http://serviio.org/)
 
 ## Usage
 
 ```
-docker create --name=serviio -v /etc/localtime:/etc/localtime:ro -v <path to data>:/config -v <path to media>:/media -v <path for transcoding>:/tmp -e PGID=<gid> -e PUID=<uid> --net=host linuxserver/serviio
+docker create --name=serviio -v /etc/localtime:/etc/localtime:ro \
+-v <path to data>:/config -v <path to media>:/media \
+-v <path for transcoding>:/tmp -e PGID=<gid> -e PUID=<uid> \
+--net=host lsiodev/serviio
 ```
 
 **Parameters**
