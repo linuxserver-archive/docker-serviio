@@ -31,7 +31,7 @@ docker create --name=serviio
 * `-e PGID` for GroupID - see below for explanation
 * `-e PUID` for UserID - see below for explanation
 
-It is based on ubuntu xenial with s6 overlay, for shell access whilst the container is running do `docker exec -it serviio /bin/bash`.
+It is based on alpine linux with s6 overlay, for shell access whilst the container is running do `docker exec -it serviio /bin/bash`.
 
 ### User / Group Identifiers
 
@@ -56,7 +56,7 @@ Setting a mapping for transcoding `-v /tmp`  ensures that the container doesn't 
 
 ## Versions
 
-+ **11-08-16:** Rebase to xenial.
++ **11-08-16:** Rebase to alpine linux.
 + **21-01-16:** Ver 1.6 , webui built in.
 + **11.12.15:** Initial Release.
 

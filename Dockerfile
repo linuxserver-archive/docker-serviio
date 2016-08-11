@@ -1,24 +1,31 @@
-FROM lsiobase/xenial
+FROM lsiobase/alpine
 MAINTAINER sparklyballs
 
-# package version
+# package version
 ARG SERVIIO_VER="1.6.1"
 
 # environment settings
-ARG DEBIAN_FRONTEND="noninteractive"
-ENV JAVA_HOME="/usr/bin/java" \
-LANG=en_US.UTF-8 LANGUAGE=en_US:en
-
-# Set the locale
-RUN \
- locale-gen en_US.UTF-8 && \
+ENV JAVA_HOME="/usr/bin/java"
 
 # install packages
- apt-get update && \
- apt-get install -y \
-	dcraw \
-	default-jre \
-	ffmpeg && \
+RUN \
+ apk add --no-cache \
+	ffmpeg \
+	jasper \
+	jpeg \
+	lcms2-dev \
+	openjdk8-jre
+
+# install build packages
+RUN \
+ apk add --no-cache --virtual=build-dependencies \
+	curl \
+	gcc \
+	g++ \
+	jasper-dev \
+	jpeg-dev \
+	lcms2-dev \
+	tar && \
 
 # install serviio app
  mkdir -p \
@@ -29,17 +36,26 @@ RUN \
  tar xf /tmp/serviio.tar.gz -C \
 	/app/serviio --strip-components=1 && \
 
+# fetch dcraw
+ curl -o \
+ /usr/bin/dcraw.c -L \
+	http://www.cybercom.net/~dcoffin/dcraw/dcraw.c && \
+
+# compile dcraw
+ cd /usr/bin && \
+ gcc -o dcraw -O4 dcraw.c -lm -ljasper -ljpeg -llcms2 && \
+
 # cleanup
- apt-get clean && \
-	rm -rf /tmp/* \
-	/var/lib/apt/lists/* \
-	/var/tmp/*
+ apk del --purge \
+	build-dependencies && \
+ rm -rf \
+	/tmp/*
 
 # change abc home folder
 RUN \
  usermod -d /config/serviio abc
 
-# add local files
+# add local files
 COPY root/ /
 
 # ports and volumes

@@ -9,4 +9,4 @@ exec \
 	-Dderby.system.home=/config/serviio/library \
 	-Dserviio.home=/app/serviio -Dplugins.location=/config/serviio \
 	-Dserviio.defaultTranscodeFolder=/transcode -Dffmpeg.location=ffmpeg \
-	-Ddcraw.location=dcraw -classpath /app/serviio/lib/*:/config/serviio/config org.serviio.MediaServer
+	-Ddcraw.location=/usr/bin/dcraw -classpath /app/serviio/lib/*:/config/serviio/config org.serviio.MediaServer
