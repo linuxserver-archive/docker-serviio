@@ -13,7 +13,7 @@ RUN \
 	ffmpeg \
 	jasper \
 	jpeg \
-	lcms2-dev \
+	lcms2 \
 	openjdk8-jre
 
 # install build packages
