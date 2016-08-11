@@ -1,0 +1,16 @@
+#!/usr/bin/with-contenv bash
+
+# make folders
+mkdir -p \
+	/config/serviio{/config,/library,/plugins}
+
+# copy config
+[[ ! -f /config/serviio/config/application-profiles.xml || ! -f /config/serviio/config/log4j.xml || ! -f /config/serviio/config/profiles.xml ]] && \
+	cp /app/serviio/config/* /config/serviio/config/
+
+# permissions
+chown -R abc:abc \
+	/app \
+	/config
+chown abc:abc \
+	/transcode
