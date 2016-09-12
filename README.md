@@ -1,13 +1,23 @@
-![https://linuxserver.io](https://www.linuxserver.io/wp-content/uploads/2015/06/linuxserver_medium.png)
+[linuxserverurl]: https://linuxserver.io
+[forumurl]: https://forum.linuxserver.io
+[ircurl]: https://www.linuxserver.io/index.php/irc/
+[podcasturl]: https://www.linuxserver.io/index.php/category/podcast/
 
-The [LinuxServer.io](https://linuxserver.io) team brings you another container release featuring easy user mapping and community support. Find us for support at:
-* [forum.linuxserver.io](https://forum.linuxserver.io)
-* [IRC](https://www.linuxserver.io/index.php/irc/) on freenode at `#linuxserver.io`
-* [Podcast](https://www.linuxserver.io/index.php/category/podcast/) covers everything to do with getting the most from your Linux Server plus a focus on all things Docker and containerisation!
+[![linuxserver.io](https://www.linuxserver.io/wp-content/uploads/2015/06/linuxserver_medium.png)][linuxserverurl]
+
+The [LinuxServer.io][linuxserverurl] team brings you another container release featuring easy user mapping and community support. Find us for support at:
+* [forum.linuxserver.io][forumurl]
+* [IRC][ircurl] on freenode at `#linuxserver.io`
+* [Podcast][podcasturl] covers everything to do with getting the most from your Linux Server plus a focus on all things Docker and containerisation!
 
 # lsiocommunity/serviio
+[![](https://images.microbadger.com/badges/image/lsiocommunity/serviio.svg)](http://microbadger.com/images/lsiocommunity/serviio "Get your own image badge on microbadger.com")[![Docker Pulls](https://img.shields.io/docker/pulls/lsiocommunity/serviio.svg)][hub][![Docker Stars](https://img.shields.io/docker/stars/lsiocommunity/serviio.svg)][hub][![Build Status](http://jenkins.linuxserver.io:8080/buildStatus/icon?job=Dockers/Community/lsiocommunity-serviio)](http://jenkins.linuxserver.io:8080/job/Dockers/job/Community/job/lsiocommunity-serviio/)
+[hub]: https://hub.docker.com/r/lsiocommunity/serviio/
 
-Serviio is a free media server. It allows you to stream your media files (music, video or images) to renderer devices (e.g. a TV set, Bluray player, games console or mobile phone) on your connected home network. [Serviio](http://serviio.org/)
+[Serviio][serviiourl] is a free media server. It allows you to stream your media files (music, video or images) to renderer devices (e.g. a TV set, Bluray player, games console or mobile phone) on your connected home network.
+
+[![serviio](https://raw.githubusercontent.com/linuxserver/community-templates/master/lsiocommunity/img/serviio-icon.png)][serviiourl]
+[serviiourl]: http://serviio.org/
 
 ## Usage
 
@@ -46,7 +56,9 @@ In this instance `PUID=1001` and `PGID=1001`. To find yours use `id user` as bel
 
 ## Setting up the application
 
-The webui is at <your-ip>:23423/console. Add as many media folder mappings as required with `-v /media/tv-shows` etc... 
+The webui is at `<your-ip>:23423/console` 
+
+Add as many media folder mappings as required with `-v /media/tv-shows` etc... 
 Setting a mapping for transcoding `-v /tmp`  ensures that the container doesn't grow unneccesarily large.
 
 ## Info
@@ -56,7 +68,7 @@ Setting a mapping for transcoding `-v /tmp`  ensures that the container doesn't 
 
 ## Versions
 
++ **12-09-16:** Add layer badges to README.
 + **11-08-16:** Rebase to alpine linux, move from lsiodev to lsiocommunity.
 + **21-01-16:** Ver 1.6 , webui built in.
 + **11.12.15:** Initial Release.
-
