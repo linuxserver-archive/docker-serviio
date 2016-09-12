@@ -11,12 +11,12 @@ The [LinuxServer.io][linuxserverurl] team brings you another container release f
 * [Podcast][podcasturl] covers everything to do with getting the most from your Linux Server plus a focus on all things Docker and containerisation!
 
 # lsiocommunity/serviio
-[![](https://images.microbadger.com/badges/image/lsiocommunity/serviio.svg)](http://microbadger.com/images/lsiocommunity/serviio "Get your own image badge on microbadger.com")[![Docker Pulls](https://img.shields.io/docker/pulls/lsiocommunity/serviio.svg)][hub][![Docker Stars](https://img.shields.io/docker/stars/lsiocommunity/serviio.svg)][hub][![Build Status](http://jenkins.linuxserver.io:8080/buildStatus/icon?job=Dockers/LinuxServer.io/lsiocommunity-serviio)](http://jenkins.linuxserver.io:8080/job/Dockers/job/LinuxServer.io/job/lsiocommunity-serviio/)
+[![](https://images.microbadger.com/badges/image/lsiocommunity/serviio.svg)](http://microbadger.com/images/lsiocommunity/serviio "Get your own image badge on microbadger.com")[![Docker Pulls](https://img.shields.io/docker/pulls/lsiocommunity/serviio.svg)][hub][![Docker Stars](https://img.shields.io/docker/stars/lsiocommunity/serviio.svg)][hub][![Build Status](http://jenkins.linuxserver.io:8080/buildStatus/icon?job=Dockers/Community/lsiocommunity-serviio)](http://jenkins.linuxserver.io:8080/job/Dockers/job/Community/job/lsiocommunity-serviio/)
 [hub]: https://hub.docker.com/r/lsiocommunity/serviio/
 
 [Serviio][serviiourl] is a free media server. It allows you to stream your media files (music, video or images) to renderer devices (e.g. a TV set, Bluray player, games console or mobile phone) on your connected home network.
 
-[![serviio](https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/serviio.jpg)][serviiourl]
+[![serviio](https://raw.githubusercontent.com/linuxserver/community-templates/master/lsiocommunity/img/serviio-icon.png)][serviiourl]
 [serviiourl]: http://serviio.org/
 
 ## Usage
