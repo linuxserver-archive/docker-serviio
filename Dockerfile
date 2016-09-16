@@ -2,7 +2,7 @@ FROM lsiobase/alpine
 MAINTAINER sparklyballs
 
 # package version
-ARG SERVIIO_VER="1.6.1"
+ARG SERVIIO_VER="1.7"
 
 # environment settings
 ENV JAVA_HOME="/usr/bin/java"
