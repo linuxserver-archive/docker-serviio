@@ -22,7 +22,7 @@ The [LinuxServer.io][linuxserverurl] team brings you another container release f
 ## Usage
 
 ```
-docker create --name=serviio 
+docker create --name=serviio \
 -v /etc/localtime:/etc/localtime:ro \
 -v <path to data>:/config \
 -v <path to media>:/media \
