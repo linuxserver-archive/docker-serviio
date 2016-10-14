@@ -11,7 +11,7 @@ The [LinuxServer.io][linuxserverurl] team brings you another container release f
 * [Podcast][podcasturl] covers everything to do with getting the most from your Linux Server plus a focus on all things Docker and containerisation!
 
 # lsiocommunity/serviio
-[![](https://images.microbadger.com/badges/image/lsiocommunity/serviio.svg)](http://microbadger.com/images/lsiocommunity/serviio "Get your own image badge on microbadger.com")[![Docker Pulls](https://img.shields.io/docker/pulls/lsiocommunity/serviio.svg)][hub][![Docker Stars](https://img.shields.io/docker/stars/lsiocommunity/serviio.svg)][hub][![Build Status](http://jenkins.linuxserver.io:8080/buildStatus/icon?job=Dockers/Community/lsiocommunity-serviio)](http://jenkins.linuxserver.io:8080/job/Dockers/job/Community/job/lsiocommunity-serviio/)
+[![](https://images.microbadger.com/badges/version/lsiocommunity/serviio.svg)](https://microbadger.com/images/lsiocommunity/serviio "Get your own version badge on microbadger.com")[![](https://images.microbadger.com/badges/image/lsiocommunity/serviio.svg)](http://microbadger.com/images/lsiocommunity/serviio "Get your own image badge on microbadger.com")[![Docker Pulls](https://img.shields.io/docker/pulls/lsiocommunity/serviio.svg)][hub][![Docker Stars](https://img.shields.io/docker/stars/lsiocommunity/serviio.svg)][hub][![Build Status](http://jenkins.linuxserver.io:8080/buildStatus/icon?job=Dockers/Community/lsiocommunity-serviio)](http://jenkins.linuxserver.io:8080/job/Dockers/job/Community/job/lsiocommunity-serviio/)
 [hub]: https://hub.docker.com/r/lsiocommunity/serviio/
 
 [Serviio][serviiourl] is a free media server. It allows you to stream your media files (music, video or images) to renderer devices (e.g. a TV set, Bluray player, games console or mobile phone) on your connected home network.
@@ -66,8 +66,18 @@ Setting a mapping for transcoding `-v /transcode`  ensures that the container do
 * Shell access whilst the container is running: `docker exec -it serviio /bin/bash`
 * To monitor the logs of the container in realtime `docker logs -f serviio`.
 
+* container version number 
+
+`docker inspect -f '{{ index .Config.Labels "build_version" }}' serviio`
+
+* image version number
+
+`docker inspect -f '{{ index .Config.Labels "build_version" }}' linuxserver/serviio`
+
+
 ## Versions
 
++ **14-10-16:** Add version layer information.
 + **17-09-16:** Change transcode folder, thanks Kwull. bump version.
 + **12-09-16:** Add layer badges to README.
 + **11-08-16:** Rebase to alpine linux, move from lsiodev to lsiocommunity.
