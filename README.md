@@ -83,7 +83,7 @@ Setting a mapping for transcoding `-v /transcode`  ensures that the container do
 
 ## Versions
 
-+ **14-10-16:** Add version layer information.
++ **14.10.16:** Add version layer information.
 + **17-09-16:** Change transcode folder, thanks Kwull. bump version.
 + **12-09-16:** Add layer badges to README.
 + **11-08-16:** Rebase to alpine linux, move from lsiodev to lsiocommunity.
