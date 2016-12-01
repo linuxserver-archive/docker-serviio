@@ -83,6 +83,8 @@ Setting a mapping for transcoding `-v /transcode`  ensures that the container do
 
 ## Versions
 
+
++ **01.12.16:** Bump to version 1.7.1.1
 + **14.10.16:** Add version layer information.
 + **17-09-16:** Change transcode folder, thanks Kwull. bump version.
 + **12-09-16:** Add layer badges to README.
