@@ -7,7 +7,7 @@ ARG VERSION
 LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 
 # package version
-ARG SERVIIO_VER="1.7.1.1"
+ARG SERVIIO_VER="1.8"
 
 # environment settings
 ENV JAVA_HOME="/usr/bin/java"
