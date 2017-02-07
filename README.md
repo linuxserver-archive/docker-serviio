@@ -84,6 +84,7 @@ Setting a mapping for transcoding `-v /transcode`  ensures that the container do
 ## Versions
 
 
++ **07.02.17:** Rebase to alpine 3.5.
 + **22.12.16:** Bump to version 1.8
 + **01.12.16:** Bump to version 1.7.1.1
 + **14.10.16:** Add version layer information.
