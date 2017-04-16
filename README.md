@@ -78,7 +78,7 @@ Setting a mapping for transcoding `-v /transcode`  ensures that the container do
 
 * image version number
 
-`docker inspect -f '{{ index .Config.Labels "build_version" }}' linuxserver/serviio`
+`docker inspect -f '{{ index .Config.Labels "build_version" }}' lsiocommunity/serviio`
 
 
 ## Versions
