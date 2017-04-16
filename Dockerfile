@@ -16,8 +16,11 @@ ENV JAVA_HOME="/usr/bin/java"
 # copy patches
 COPY patches/ /tmp/patches/
 
-# install build packages
+# change abc home folder
 RUN \
+ usermod -d /config/serviio abc && \
+
+# install build packages
  apk add --no-cache --virtual=build-dependencies \
 	alsa-lib-dev \
 	bzip2-dev \
@@ -163,10 +166,6 @@ RUN \
 	build-dependencies && \
  rm -rf \
 	/tmp/*
-
-# change abc home folder
-RUN \
- usermod -d /config/serviio abc
 
 # add local files
 COPY root/ /
