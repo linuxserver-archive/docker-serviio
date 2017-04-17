@@ -96,6 +96,7 @@ RUN \
 	opus \
 	p11-kit \
 	sdl \
+	ttf-dejavu \
 	v4l-utils-libs \
 	x264-libs \
 	x265 \
