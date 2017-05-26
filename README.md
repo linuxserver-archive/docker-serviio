@@ -84,6 +84,7 @@ Setting a mapping for transcoding `-v /transcode`  ensures that the container do
 ## Versions
 
 
++ **26.05.17:** Rebase to alpine 3.6.
 + **07.02.17:** Compile ffmpeg for subtitles filter support ,consolidate layers.
 + **07.02.17:** Rebase to alpine 3.5.
 + **22.12.16:** Bump to version 1.8
