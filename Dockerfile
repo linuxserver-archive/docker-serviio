@@ -7,8 +7,8 @@ ARG VERSION
 LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 
 # package version
-ARG FFMPEG_VER="3.1.7"
-ARG SERVIIO_VER="1.8"
+ARG FFMPEG_VER="3.3.3"
+ARG SERVIIO_VER="1.9"
 
 # environment settings
 ENV JAVA_HOME="/usr/bin/java"
@@ -130,13 +130,13 @@ RUN \
 	--enable-libvpx \
 	--enable-libx264 \
 	--enable-libx265 \
+	--enable-libxcb \
 	--enable-libxvid \
 	--enable-pic \
 	--enable-postproc \
 	--enable-pthreads \
 	--enable-shared \
 	--enable-vaapi \
-	--enable-x11grab \
 	--prefix=/usr && \
  make && \
  gcc -o tools/qt-faststart $CFLAGS tools/qt-faststart.c && \
