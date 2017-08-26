@@ -153,12 +153,8 @@ RUN \
  tar xf /tmp/serviio.tar.gz -C \
 	/app/serviio --strip-components=1 && \
 
-# fetch dcraw
- curl -o \
- /usr/bin/dcraw.c -L \
-	http://www.cybercom.net/~dcoffin/dcraw/dcraw.c && \
-
 # compile dcraw
+ cp /tmp/patches/dcraw.c /usr/bin/dcraw.c && \
  cd /usr/bin && \
  gcc -o dcraw -O4 dcraw.c -lm -ljasper -ljpeg -llcms2 && \
 
