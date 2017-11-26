@@ -7,7 +7,7 @@ ARG VERSION
 LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 
 # package version
-ARG FFMPEG_VER="3.3.3"
+ARG FFMPEG_VER="3.4"
 ARG SERVIIO_VER="1.9"
 
 # environment settings
@@ -138,11 +138,26 @@ RUN \
 	--enable-shared \
 	--enable-vaapi \
 	--prefix=/usr && \
- make && \
+
+# attempt to set number of cores available for make to use
+ set -ex && \
+ CPU_CORES=$( < /proc/cpuinfo grep -c processor ) || echo "failed cpu look up" && \
+ if echo $CPU_CORES | grep -E  -q '^[0-9]+$'; then \
+	: ;\
+ if [ "$CPU_CORES" -gt 7 ]; then \
+	CPU_CORES=$(( CPU_CORES  - 3 )); \
+ elif [ "$CPU_CORES" -gt 5 ]; then \
+	CPU_CORES=$(( CPU_CORES  - 2 )); \
+ elif [ "$CPU_CORES" -gt 3 ]; then \
+	CPU_CORES=$(( CPU_CORES  - 1 )); fi \
+ else CPU_CORES="1"; fi && \
+
+ make -j $CPU_CORES && \
  gcc -o tools/qt-faststart $CFLAGS tools/qt-faststart.c && \
  make doc/ffmpeg.1 doc/ffplay.1 doc/ffserver.1 && \
  make install install-man && \
  install -D -m755 tools/qt-faststart /usr/bin/qt-faststart && \
+ set +ex && \
 
 # install serviio app
  mkdir -p \

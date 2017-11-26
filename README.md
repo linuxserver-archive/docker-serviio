@@ -83,6 +83,7 @@ Setting a mapping for transcoding `-v /transcode`  ensures that the container do
 
 ## Versions
 
++ **26.11.2017:** Use cpu core counting routine to speed up build time, bump ffmpeg to 3.4 .
 + **26.08.17:** Use local copy of dcraw as dns issues on download server.
 + **30.07.17:** Bump to version 1.9 and ffmpeg to 3.3.3.
 + **26.05.17:** Rebase to alpine 3.6.
