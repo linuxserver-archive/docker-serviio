@@ -1,12 +1,12 @@
-FROM lsiobase/alpine:3.6
-MAINTAINER sparklyballs
+FROM lsiobase/alpine:3.7
 
 # set version label
 ARG BUILD_DATE
 ARG VERSION
 LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
+LABEL maintainer="sparklyballs"
 
-# package version
+# package versions
 ARG FFMPEG_VER="3.4"
 ARG SERVIIO_VER="1.9"
 
@@ -16,11 +16,10 @@ ENV JAVA_HOME="/usr/bin/java"
 # copy patches
 COPY patches/ /tmp/patches/
 
-# change abc home folder
 RUN \
+ echo "**** change abc home folder ****" && \
  usermod -d /config/serviio abc && \
-
-# install build packages
+ echo "**** install build packages ****" && \
  apk add --no-cache --virtual=build-dependencies \
 	alsa-lib-dev \
 	bzip2-dev \
@@ -54,8 +53,7 @@ RUN \
 	xvidcore-dev \
 	yasm \
 	zlib-dev && \
-
-# install runtime packages
+ echo "**** install runtime packages ****" && \
  apk add --no-cache \
 	alsa-lib \
 	expat \
@@ -101,8 +99,7 @@ RUN \
 	x264-libs \
 	x265 \
 	xvidcore && \
-
-# compile ffmpeg
+ echo "**** compile ffmpeg ****" && \
  mkdir -p /tmp/ffmpeg-src && \
  curl -o \
  /tmp/ffmpeg.tar.bz2 -L \
@@ -138,8 +135,7 @@ RUN \
 	--enable-shared \
 	--enable-vaapi \
 	--prefix=/usr && \
-
-# attempt to set number of cores available for make to use
+ echo "**** attempt to set number of cores available for make to use ****" && \
  set -ex && \
  CPU_CORES=$( < /proc/cpuinfo grep -c processor ) || echo "failed cpu look up" && \
  if echo $CPU_CORES | grep -E  -q '^[0-9]+$'; then \
@@ -151,15 +147,13 @@ RUN \
  elif [ "$CPU_CORES" -gt 3 ]; then \
 	CPU_CORES=$(( CPU_CORES  - 1 )); fi \
  else CPU_CORES="1"; fi && \
-
  make -j $CPU_CORES && \
  gcc -o tools/qt-faststart $CFLAGS tools/qt-faststart.c && \
  make doc/ffmpeg.1 doc/ffplay.1 doc/ffserver.1 && \
  make install install-man && \
  install -D -m755 tools/qt-faststart /usr/bin/qt-faststart && \
  set +ex && \
-
-# install serviio app
+ echo "**** install serviio app ****" && \
  mkdir -p \
 	/app/serviio && \
  curl -o \
@@ -167,13 +161,11 @@ RUN \
 	http://download.serviio.org/releases/serviio-$SERVIIO_VER-linux.tar.gz && \
  tar xf /tmp/serviio.tar.gz -C \
 	/app/serviio --strip-components=1 && \
-
-# compile dcraw
+ echo "**** compile dcraw ****" && \
  cp /tmp/patches/dcraw.c /usr/bin/dcraw.c && \
  cd /usr/bin && \
  gcc -o dcraw -O4 dcraw.c -lm -ljasper -ljpeg -llcms2 && \
-
-# cleanup
+ echo "**** cleanup ****" && \
  apk del --purge \
 	build-dependencies && \
  rm -rf \
