@@ -8,7 +8,7 @@ LABEL maintainer="sparklyballs"
 
 # package versions
 ARG FFMPEG_VER="3.4.2"
-ARG SERVIIO_VER="1.9.1"
+ARG SERVIIO_VER="1.9.2"
 
 # environment settings
 ENV JAVA_HOME="/usr/bin/java"
