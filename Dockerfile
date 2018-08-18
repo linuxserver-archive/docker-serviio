@@ -1,24 +1,13 @@
-FROM lsiobase/alpine:3.7
-
-# set version label
-ARG BUILD_DATE
-ARG VERSION
-LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
-LABEL maintainer="sparklyballs"
+FROM lsiobase/alpine:3.8 as buildstage
+############## build stage ##############
 
 # package versions
 ARG FFMPEG_VER="3.4.2"
-ARG SERVIIO_VER="1.9.2"
-
-# environment settings
-ENV JAVA_HOME="/usr/bin/java"
 
 # copy patches
 COPY patches/ /tmp/patches/
 
 RUN \
- echo "**** change abc home folder ****" && \
- usermod -d /config/serviio abc && \
  echo "**** install build packages ****" && \
  apk add --no-cache --virtual=build-dependencies \
 	alsa-lib-dev \
@@ -52,10 +41,79 @@ RUN \
 	x265-dev \
 	xvidcore-dev \
 	yasm \
-	zlib-dev && \
+	zlib-dev
+
+RUN \
+ echo "**** compile ffmpeg ****" && \
+ mkdir -p /tmp/ffmpeg && \
+ curl -o \
+ /tmp/ffmpeg-src.tar.bz2 -L \
+	"http://ffmpeg.org/releases/ffmpeg-${FFMPEG_VER}.tar.bz2" && \
+ tar xf \
+ /tmp/ffmpeg-src.tar.bz2 -C \
+	/tmp/ffmpeg --strip-components=1 && \
+ cd /tmp/ffmpeg && \
+ for i in /tmp/patches/*.patch; do patch -p1 -i $i; done && \
+ ./configure \
+	--disable-debug \
+	--disable-static \
+	--disable-stripping \
+	--enable-avfilter \
+	--enable-avresample \
+	--enable-gnutls \
+	--enable-gpl \
+	--enable-libass \
+	--enable-libmp3lame \
+	--enable-libopus \
+	--enable-librtmp \
+	--enable-libtheora \
+	--enable-libv4l2 \
+	--enable-libvorbis \
+	--enable-libvpx \
+	--enable-libx264 \
+	--enable-libx265 \
+	--enable-libxcb \
+	--enable-libxvid \
+	--enable-pic \
+	--enable-postproc \
+	--enable-pthreads \
+	--enable-shared \
+	--enable-vaapi \
+	--prefix=/usr && \
+ make && \
+ gcc -o tools/qt-faststart $CFLAGS tools/qt-faststart.c && \
+ make doc/ffmpeg.1 doc/ffplay.1 doc/ffserver.1 && \
+ make DESTDIR=/tmp/ffmpeg-build install install-man && \
+ install -D -m755 tools/qt-faststart /tmp/ffmpeg-build/usr/bin/qt-faststart
+
+RUN \
+ echo "**** compile dcraw ****" && \
+ cp /tmp/patches/dcraw.c /tmp/ffmpeg-build/usr/bin/dcraw.c && \
+ cd /tmp/ffmpeg-build/usr/bin && \
+ gcc -o dcraw -O4 dcraw.c -lm -ljasper -ljpeg -llcms2
+############## runtime stage ##############
+
+FROM lsiobase/alpine:3.8
+
+# set version label
+ARG BUILD_DATE
+ARG VERSION
+LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
+LABEL maintainer="sparklyballs"
+
+# package versions
+ARG SERVIIO_VER="1.9.2"
+
+# environment settings
+ENV JAVA_HOME="/usr/bin/java"
+
+RUN \
+ echo "**** change abc home folder ****" && \
+ usermod -d /config/serviio abc && \
  echo "**** install runtime packages ****" && \
  apk add --no-cache \
 	alsa-lib \
+	curl \
 	expat \
 	gmp \
 	gnutls \
@@ -99,47 +157,6 @@ RUN \
 	x264-libs \
 	x265 \
 	xvidcore && \
- echo "**** compile ffmpeg ****" && \
- mkdir -p /tmp/ffmpeg-src && \
- curl -o \
- /tmp/ffmpeg.tar.bz2 -L \
-	"http://ffmpeg.org/releases/ffmpeg-${FFMPEG_VER}.tar.bz2" && \
- tar xf \
- /tmp/ffmpeg.tar.bz2 -C \
-	/tmp/ffmpeg-src --strip-components=1 && \
- cd /tmp/ffmpeg-src && \
- for i in /tmp/patches/*.patch; do patch -p1 -i $i; done && \
- ./configure \
-	--disable-debug \
-	--disable-static \
-	--disable-stripping \
-	--enable-avfilter \
-	--enable-avresample \
-	--enable-gnutls \
-	--enable-gpl \
-	--enable-libass \
-	--enable-libmp3lame \
-	--enable-libopus \
-	--enable-librtmp \
-	--enable-libtheora \
-	--enable-libv4l2 \
-	--enable-libvorbis \
-	--enable-libvpx \
-	--enable-libx264 \
-	--enable-libx265 \
-	--enable-libxcb \
-	--enable-libxvid \
-	--enable-pic \
-	--enable-postproc \
-	--enable-pthreads \
-	--enable-shared \
-	--enable-vaapi \
-	--prefix=/usr && \
- make && \
- gcc -o tools/qt-faststart $CFLAGS tools/qt-faststart.c && \
- make doc/ffmpeg.1 doc/ffplay.1 doc/ffserver.1 && \
- make install install-man && \
- install -D -m755 tools/qt-faststart /usr/bin/qt-faststart && \
  echo "**** install serviio app ****" && \
  mkdir -p \
 	/app/serviio && \
@@ -148,17 +165,12 @@ RUN \
 	http://download.serviio.org/releases/serviio-$SERVIIO_VER-linux.tar.gz && \
  tar xf /tmp/serviio.tar.gz -C \
 	/app/serviio --strip-components=1 && \
- echo "**** compile dcraw ****" && \
- cp /tmp/patches/dcraw.c /usr/bin/dcraw.c && \
- cd /usr/bin && \
- gcc -o dcraw -O4 dcraw.c -lm -ljasper -ljpeg -llcms2 && \
  echo "**** cleanup ****" && \
- apk del --purge \
-	build-dependencies && \
  rm -rf \
 	/tmp/*
 
-# add local files
+# copy files from build stage and local files
+COPY --from=buildstage /tmp/ffmpeg-build/usr/ /usr/
 COPY root/ /
 
 # ports and volumes
