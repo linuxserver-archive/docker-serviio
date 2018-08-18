@@ -83,6 +83,7 @@ Setting a mapping for transcoding `-v /transcode`  ensures that the container do
 
 ## Versions
 
++ **18.08.18:** Rebase to alpine 3.8 and use buildstage.
 + **07.07.18:** Bump to version 1.9.2.
 + **27.03.18:** Bump to version 1.9.1 and ffmpeg to 3.4.2.
 + **03.01.18:** Deprecate cpu_core routine lack of scaling, bump ffmpeg to 3.4.1.
